@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Workshops</title>
+    <link href=".css/bootstrap.min.css" rel="stylesheet">
+    <!-- Script loading -->
+    <script src=".js/jquery-3.6.0.min.js" integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" crossorigin="anonymous"></script>
+    <script src=".js/bootstrap.min.js"></script>
+    <script src=".js/d3.v7.min.js"></script>
+    <link href=".css/normalize.css" rel="stylesheet">
+
+</head>
+<body>
+  <div class="container-fluid">
+    <div class="row">
+      <div class="col-md-12">
+        <nav class="navbar navbar-expand-lg navbar-light bg-light">
+           
+          <button class="navbar-toggler collapsed" type="button" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1">
+            <span class="navbar-toggler-icon"></span>
+          </button> <a class="navbar-brand" href="index.html"><strong>Eventbrite Stats</strong>
+  
+          </a>
+          <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+            <ul class="navbar-nav ml-md-auto">
+              <li class="nav-item active">
+                 <!--<a class="nav-link" href="#">Link <span class="sr-only">(current)</span></a>-->
+              </li>
+              <li class="nav-item dropdown">
+                 <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownMenuLink" data-toggle="dropdown"> Menu</a>
+                <div class="dropdown-menu dropdown-menu-right" aria-labelledby="navbarDropdownMenuLink">
+                  <a class="dropdown-item" href="index2.html">Popular Topics</a>
+                  <a class="dropdown-item" href="workshops.html">Popular Workshops</a> 
+                  <div class="dropdown-divider"></div> <a class="dropdown-item" href="/index.html">Home</a>
+                </div>
+              </li>
+            </ul>
+          </div>
+        </nav>
+    
+
+    <div class="container">
+        <h1 class="page-header"> Popular Workshops </h1>
+        <p class="lead"> Includes workshops from Eventbrite in the year 2021 with actuall attendees</p>
+        <br>
+    </div>
+
+    <!-- Add legend or data table here listing all Workshops-->
+
+
+    <div id="my_dataviz"></div>  <br><br>
+    <div class=container-fluid><iframe src="/table.html" scrolling="yes" width="540" height="200""></iframe></div>
+    <p> <a class="btn" href="/work-data/evdata.csv">Data Source »</a> </p>
+
+    
+
+    <script>
+
+        // set the dimensions and margins of the graph
+        const margin = {top: 30, right: 30, bottom: 70, left: 60},
+            width = 880 - margin.left - margin.right,
+            height = 540 - margin.top - margin.bottom;
+        
+        // append the svg object to the body of the page
+        const svg = d3.select("#my_dataviz")
+          .append("svg")
+            .attr("width", width + margin.left + margin.right)
+            .attr("height", height + margin.top + margin.bottom)
+          .append("g")
+            .attr("transform", `translate(${margin.left},${margin.top})`);
+
+
+        svg.append("text")
+          .attr("transform","translate(100,0)")
+          .attr("x", 160)
+          .attr("y", 0)
+          .attr("font-size", "26px")
+          .text("Popular Workshops in 2021")
+        
+        // Parse the Data
+        d3.csv("/work-data/evdata.csv").then( function(data) {
+        //d3.csv("/work-data/workshop_planning_data.csv").then( function(data) {
+
+          var myColor = d3.scaleSequential()
+            .interpolator(d3.interpolateInferno)
+            .domain([1,100])
+
+          /*
+          data.sort(function(a, b) {
+            return d3.descending(a.value, b.value)
+          })   
+          x.domain(data.map(function(d) {
+            return d.value;
+          }));  */
+
+
+        // create a tooltip
+        var Tooltip = d3.select("#div_template")
+          .append("div")
+          .style("opacity", 0)
+          .attr("class", "tooltip")
+          .style("background-color", "white")
+          .style("border", "solid")
+          .style("border-width", "2px")
+          .style("border-radius", "5px")
+          .style("padding", "5px")
+
+        // Three function that change the tooltip when user hover / move / leave a cell
+        var mouseover = function(d) {
+          Tooltip
+            .style("opacity", 1)
+          d3.select(this)
+            .style("stroke", "black")
+            .style("opacity", 1)
+        }
+        var mousemove = function(d) {
+          Tooltip
+            .html("The exact value of<br>this cell is: " + d.value)
+            .style("left", (d3.mouse(this)[0]+70) + "px")
+            .style("top", (d3.mouse(this)[1]) + "px")
+        }
+        var mouseleave = function(d) {
+          Tooltip
+            .style("opacity", 0)
+          d3.select(this)
+            .style("stroke", "none")
+            .style("opacity", 0.8)
+        }
+
+        // X axis
+        const x = d3.scaleBand()
+          .range([ 0, width ])
+          .domain(data.map(d => d.name))
+          .padding(0.3);
+        svg.append("g")
+          .attr("transform", `translate(12, ${height})`)
+          .call(d3.axisBottom(x))
+          .selectAll("text")
+            .attr("transform", "translate(0,7)rotate(90)")
+            .style("text-anchor", "start");
+        
+        // Add Y axis
+        const y = d3.scaleLinear()
+          .domain([0, 350])
+          .range([ height, 0]);
+        svg.append("g")
+          .call(d3.axisLeft(y));
+          svg.append("text")
+            .attr("class", "y label")
+            .attr("text-anchor", "end")
+            .attr("y", -50)
+            .attr("dy", ".75em")
+            .attr("transform", "rotate(-90)")
+            .text("Number of People");
+
+        // Bars
+        svg.selectAll("mybar")
+          .data(data)
+          .join("rect")
+            .attr("x", d => x(d.name))
+            .attr("y", d => y(d.value))
+            .attr("width", x.bandwidth())
+            .attr("height", d => height - y(d.value))
+            .attr("fill", "#69b3a2")
+        
+        })
+        </script>
+
+
+    <!--
+    <script>
+
+        // set the dimensions and margins of the graph
+        const margin = {top: 30, right: 30, bottom: 70, left: 60},
+            width = 460 - margin.left - margin.right,
+            height = 400 - margin.top - margin.bottom;
+        
+        // append the svg object to the body of the page
+        const svg = d3.select("#my_dataviz")
+          .append("svg")
+            .attr("width", width + margin.left + margin.right)
+            .attr("height", height + margin.top + margin.bottom)
+          .append("g")
+            .attr("transform", `translate(${margin.left},${margin.top})`);
+        
+        // Parse the Data
+        d3.csv("work-data/workshop_planning.csv").then( function(data) {
+        
+        // Variable for what to show on X axis
+        hello = d.Subtopic
+        
+        // X axis
+        const x = d3.scaleBand()
+          .range([ 0, width ])
+          .domain(data.map(d => d.Co))
+          .padding(0.2);
+        svg.append("g")
+          .attr("transform", `translate(0, ${height})`)
+          .call(d3.axisBottom(x))
+          .selectAll("text")
+            .attr("transform", "translate(-10,0)rotate(-45)")
+            .style("text-anchor", "end");
+        
+        // Add Y axis
+        const y = d3.scaleLinear()
+          .domain([0, 13000])
+          .range([ height, 0]);
+        svg.append("g")
+          .call(d3.axisLeft(y));
+        
+        // Bars
+        svg.selectAll("mybar")
+          .data(data)
+          .join("rect")
+            .attr("x", d => x(d.Subtopic))
+            .attr("y", d => y(d.Value))
+            .attr("width", x.bandwidth())
+            .attr("height", d => height - y(d.Value))
+            .attr("fill", "#69b3a2")
+        
+        })
+    </script>
+-->
+</body>
+</html>
+
