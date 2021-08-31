@@ -1,12 +1,13 @@
-#! Python 3.9
+#!/usr/bin/python3
 import os
-import subprocess
 import sys
 import platform
 import webbrowser
 
-if platform.system == "Linux":
+if platform.system() == "Linux":
     os.system('/usr/bin/python3 -m http.server 8080')
-else:
-    os.system('index.html')
-    webbrowser.open(http://127.0.0.1:8080/index.html)
+    # sys.stdout( )
+elif platform.system() == "Windows":
+    os.system('C:\Users\%USERNAME%\AppData\Local\Programs\Python\Python39\python.exe -m http.server 8080')
+
+webbrowser.open('http://127.0.0.1:8080/index.html')

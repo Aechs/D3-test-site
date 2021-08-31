@@ -1,2 +1,2 @@
 # D3-test-site
-Graphs using D3.js and data from eventbrite
+Graphs data from eventbrite using D3.js
