@@ -1,71 +1,17 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Workshops</title>
-    <link href=".css/bootstrap.min.css" rel="stylesheet">
-    <!-- Script loading -->
-    <script src=".js/jquery-3.6.0.min.js" integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" crossorigin="anonymous"></script>
-    <script src=".js/bootstrap.min.js"></script>
-    <script src=".js/d3.v7.min.js"></script>
-    <link href=".css/normalize.css" rel="stylesheet">
-    <link href=".css/extra_styles.css" rel="stylesheet">
-
-</head>
-<body>
-  <div class="container-fluid">
-    <div class="row">
-      <div class="col-md-12">
-        <nav class="navbar navbar-expand-lg navbar-light bg-light">
-          <button class="navbar-toggler collapsed" type="button" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1">
-            <span class="navbar-toggler-icon"></span>
-          </button> <a class="navbar-brand" href="index.html"><strong>Eventbrite Stats</strong>
-          </a>
-          <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
-            <ul class="navbar-nav ml-md-auto">
-              <li class="nav-item active">
-                 <!--<a class="nav-link" href="#">Link <span class="sr-only">(current)</span></a>-->
-              </li>
-              <li class="nav-item dropdown">
-                 <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownMenuLink" data-toggle="dropdown"> Menu</a>
-                <div class="dropdown-menu dropdown-menu-right" aria-labelledby="navbarDropdownMenuLink">
-                  <a class="dropdown-item" href="index2.html">Popular Topics</a>
-                  <a class="dropdown-item" href="workshops.html">Popular Workshops</a> 
-                  <div class="dropdown-divider"></div> <a class="dropdown-item" href="index.html">Home</a>
-                </div>
-              </li>
-            </ul>
-          </div>
-        </nav>
-    
-    <div class="container">
-        <h1 class="page-header"> Popular Workshops </h1>
-        <p class="lead"> Includes workshops from Eventbrite in the year 2021 with actuall attendees</p>
-        <br>
-    </div>
-    <!-- Add legend or data table here listing all Workshops-->
-    <div id="my_dataviz"></div>  <br><br>
-    <div class=container-fluid><iframe src="table.html" scrolling="yes" width="540" height="200""></iframe></div>
-    <p> <a class="btn" href="work-data/evdata.csv">Data Source »</a>
-        <a class="btn" href="original-data/workshop_planning_data.xlsx">Original Data Source »</a> </p>
-
-
-    <!-- Unable to link remote .js here for some reason, pasted for sake of time -->
-    <script>
-        // set dimensions and margins
+       
+       // set the dimensions and margins of the graph
         const margin = {top: 30, right: 30, bottom: 70, left: 60},
             width = 880 - margin.left - margin.right,
             height = 540 - margin.top - margin.bottom;
         
-        // append svg 
+        // append the svg object to the body of the page
         const svg = d3.select("#my_dataviz")
           .append("svg")
             .attr("width", width + margin.left + margin.right)
             .attr("height", height + margin.top + margin.bottom)
           .append("g")
             .attr("transform", `translate(${margin.left},${margin.top})`);
+
 
         svg.append("text")
           .attr("transform","translate(100,0)")
@@ -90,7 +36,8 @@
             return d.value;
           }));  */
 
-        //tooltip
+
+        // create a tooltip
         var Tooltip = d3.select("#div_template")
           .append("div")
           .style("opacity", 0)
@@ -101,7 +48,7 @@
           .style("border-radius", "5px")
           .style("padding", "5px")
 
-        // function that change the tooltip when user hover / move / leave a cell
+        // Three function that change the tooltip when user hover / move / leave a cell
         var mouseover = function(d) {
           Tooltip
             .style("opacity", 1)
@@ -135,7 +82,7 @@
             .attr("transform", "translate(0,7)rotate(90)")
             .style("text-anchor", "start");
         
-        // Y axis
+        // Add Y axis
         const y = d3.scaleLinear()
           .domain([0, 350])
           .range([ height, 0]);
@@ -160,6 +107,3 @@
             .attr("fill", "#69b3a2")
         
         })
-        </script>
-</body>
-</html>
