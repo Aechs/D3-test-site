@@ -22,7 +22,7 @@
         
         // Parse the Data
         //d3.csv("/work-data/evdata.csv").then( function(data) {
-        d3.csv("/work-data/workshop_planning_data.csv").then( function(data) {
+        d3.csv("work-data/workshop_planning_data.csv").then( function(data) {
 
         // X axis
         const x = d3.scaleBand()

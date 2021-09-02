@@ -21,7 +21,7 @@
           .text("Popular Workshops in 2021")
         
         // Parse the Data
-        d3.csv("/work-data/evdata.csv").then( function(data) {
+        d3.csv("work-data/evdata.csv").then( function(data) {
         //d3.csv("/work-data/workshop_planning_data.csv").then( function(data) {
 
           var myColor = d3.scaleSequential()
